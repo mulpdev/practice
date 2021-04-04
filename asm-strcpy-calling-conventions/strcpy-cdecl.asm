@@ -79,6 +79,7 @@ strcpy:
   mov edx, [ebp + 0xC]  ; param 2 src
   push edx
   call strlen
+  add esp, 0x4
 
   mov ecx, eax
   mov edx, ecx
@@ -87,10 +88,8 @@ strcpy:
   cld
   rep movsb
   std 
-  c:
   mov esp, ebp
   pop ebp
-  d:
   ret
 
 
@@ -112,7 +111,8 @@ _start:
   or esi, MAP_PRIVATE      ; private and not file backed (just allocate memory, don't make it point to a file)
   mov edi, -1              ; no fd
   mov ebp, 0x0             ; no offset
-  mov eax, 192             ; syscall 192 is mmap2, 90 is mmap but fails?
+  mov eax, 192             ; syscall 192 is mmap2, 90 is mmap but fails b/c it wants an argument struct
+                           ; https://stackoverflow.com/questions/59923709/problem-trying-to-call-mmap-in-32-bit-i386-assembly#comment105970761_59923709
   
   push after_mmap          ; EIP after sysenter
   push ecx
@@ -128,6 +128,7 @@ _start:
   push str1
   push eax      ; eax is address from mmap
   call strcpy
+  add esp, 0x8
   xor ecx, ecx
   ; exit
   exit:
