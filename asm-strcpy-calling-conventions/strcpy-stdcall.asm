@@ -111,15 +111,8 @@ _start:
   mov edi, -1              ; no fd
   mov ebp, 0x0             ; no offset
   mov eax, 192             ; syscall 192 is mmap2, 90 is mmap but fails?
-  
-  push after_mmap          ; EIP after sysenter
-  push ecx
-  push edx
-  push ebp
-  mov ebp, esp
-  sysenter
+  int 0x80  
 
-  after_mmap:
   test eax, eax
   jz err
 
